@@ -34,7 +34,13 @@ const Navigation = ()=>{
 
 
     useEffect(()=>{
-        return window.onload = loadMenu;
+        return window.onload = ()=>{
+            if(window.innerWidth < 720){
+                setMenuMobile(true);
+            }else{
+                setMenuMobile(false);
+            }
+        };
     },[]);
 
     return(
@@ -43,14 +49,25 @@ const Navigation = ()=>{
                 <div className="">
                     <img src="/img/logo.jpeg" alt="Logo da itep" className="w-48" />
                 </div>
-                {openMenu && 
-                    <ul ref={menuRef} className={`flex gap-4 ${menuMobile ? 'flex-col absolute  bg-white py-8 pr-16  px-4 top-[100px] right-0 rounded-lg':'' }`}>
+
+                {!menuMobile && 
+                    <ul ref={menuRef} className={`flex gap-4 `}>
                         <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaHome size={28} /> Página inicial</Link></li>
                         <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaGraduationCap size={28} /> Cursos</Link></li>
                         <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaPerson size={28} /> Sobre</Link></li>
                         <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaPhone size={28} /> Contato</Link></li>
                     </ul>
                 }
+
+                {menuMobile && openMenu &&
+                    <ul ref={menuRef} className={`flex  gap-4 ${menuMobile ? 'flex-col absolute  bg-white py-8 pr-16  px-4 top-[100px] right-0 rounded-lg':'' }`}>
+                        <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaHome size={28} /> Página inicial</Link></li>
+                        <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaGraduationCap size={28} /> Cursos</Link></li>
+                        <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaPerson size={28} /> Sobre</Link></li>
+                        <li className="text-xl font-bold hover:text-orange-500 hover:border-b-orange-300 hover:border-b-4 border-b-4 border-white"><Link to="/" className="flex gap-2"><FaPhone size={28} /> Contato</Link></li>
+                    </ul>
+                }
+
                 {menuMobile &&
                     <IoMenu onClick={handleClick} size={50} className="text-orange-600 cursor-pointer"/>
                 }
