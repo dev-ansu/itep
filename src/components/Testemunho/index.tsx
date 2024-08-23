@@ -2,7 +2,7 @@ import Container from "../Container";
 
 const Testemunho = ()=>{
     return (
-        <div style={{backgroundImage:"url(/public/img/sobre2.jpeg)", backgroundRepeat:"no-repeat", backgroundSize:"cover"}}>
+        <div style={{backgroundImage:"url(/img/sobre2.jpeg)", backgroundRepeat:"no-repeat", backgroundSize:"cover"}}>
             <Container>
                 <div className="text-center">
                     <h1 className="text-4xl text-center font-bold uppercase">Depoimentos <span className="text-orange-600">nossos alunos</span></h1>                

@@ -15,7 +15,7 @@ const Features = ()=>{
                         <Link key={i} className="hover:scale-105 transition-all " to="/curso/1">
                             <div className="sm:w-full bg-white shadow-lg">
                                 <div className="w-full">
-                                    <img src="/public/img/sobre2.jpeg" className=""></img>
+                                    <img src="/img/sobre2.jpeg" className=""></img>
                                 </div>
                                 <div className="flex p-8 justify-center items-center">
                                     <p className="font-medium">Programador web</p>
