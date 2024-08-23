@@ -6,7 +6,7 @@ const About = ()=>{
         <div className="w-full relative my-12 min-h-screen h-screen bg-slate-600">
 
             <div className="h-full w-1/2 bg-slate-300">
-                <img className="w-full h-full object-cover" src="/public/img/sobre2.jpeg" alt="Imagem do sobre. Homem mexendo no computador." />
+                <img className="w-full h-full object-cover" src="/img/sobre2.jpeg" alt="Imagem do sobre. Homem mexendo no computador." />
             </div>
             
             <div  className="absolute shadow-lg md:left-[46.67%] top-24 bg-white drop-shadow-2xl flex flex-col gap-8 p-8">
