@@ -25,6 +25,7 @@ const Navigation = ()=>{
 
     useEffect(()=>{
         window.addEventListener('resize', loadMenu);
+        loadMenu();
         return ()=> window.removeEventListener('resize', loadMenu)
     },[])
     
@@ -33,18 +34,6 @@ const Navigation = ()=>{
     }
 
 
-    const handleOnLoad = ()=>{
-        if(window.innerWidth <= 720){
-            setMenuMobile(true);
-        }else{
-            setMenuMobile(false);
-            setOpenMenu(true);
-        }
-    }
-
-    useEffect(()=>{
-        window.onload = handleOnLoad
-    },[]);
 
     return(
         <Container>
