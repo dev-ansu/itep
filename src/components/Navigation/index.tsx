@@ -33,14 +33,17 @@ const Navigation = ()=>{
     }
 
 
+    const handleOnLoad = ()=>{
+        if(window.innerWidth <= 720){
+            setMenuMobile(true);
+        }else{
+            setMenuMobile(false);
+            setOpenMenu(true);
+        }
+    }
+
     useEffect(()=>{
-        return window.onload = ()=>{
-            if(window.innerWidth < 720){
-                setMenuMobile(true);
-            }else{
-                setMenuMobile(false);
-            }
-        };
+        window.onload = handleOnLoad
     },[]);
 
     return(
