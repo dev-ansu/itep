@@ -22,13 +22,13 @@ const Login = ()=>{
         mode:"onChange",
         resolver: zodResolver(loginValidationSchema),
     });
+    const [timeSinceLastAttempt, setTimeSinceLastAttempt] = useState(0);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     
 
     const failedAttempts = async(email: string)=>{
         const userRef = doc(db, 'failedLogings', email);
-        try{
             await runTransaction(db, async(transaction: any)=>{
                 const userDoc = await transaction.get(userRef);
                 const now: any= new Date();
@@ -39,8 +39,7 @@ const Login = ()=>{
                     const timeSinceLastAttempt = data.lastAttempt ? now.getTime() - data.lastAttempt.toDate().getTime():0;
     
                     if(data.failedAttempts >= 5 && timeSinceLastAttempt < 10 * 60 * 1000){
-                        const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
-                        toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
+                        setTimeSinceLastAttempt(timeSinceLastAttempt);
                         throw new Error('Account temporarily locked');
                     }
 
@@ -78,11 +77,6 @@ const Login = ()=>{
             //     await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
             // }
             return false; // Not blocked
-        }catch(err){
-            setLoading(false);
-            console.log(err);
-            return true; // blocked
-        }
     }
     useEffect(()=>{
         const handleLogout = async()=>{
@@ -93,12 +87,7 @@ const Login = ()=>{
     
     const authentication = async(data: LoginData)=>{
         setLoading(true);
-        const isBlocked = await failedAttempts(data.email);
-        console.log(isBlocked);
-
-        if(isBlocked){
-            return;
-        }
+  
         try{
             const userRef = await signInWithEmailAndPassword(auth, data.email, data.password);
             const user = userRef.user;
@@ -114,16 +103,23 @@ const Login = ()=>{
             }
             throw new Error('error');
         }catch(error: any){  
-            await failedAttempts(data.email);
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+            try{
+                await failedAttempts(data.email);
+            }catch(err: any){
+                if(err.message === "Account temporarily locked"){
+                    const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
+                    toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
+                    setLoading(false);
+                    return;
+                }
+            }
+            if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
                 toast.error('Credenciais inválidas. Verifique seu e-mail e senha.');
-            } else if (error.message === 'Account temporarily locked') {
-                // Already handled by failedAttempts
             } else {
                 toast.error('Erro ao autenticar. Tente novamente mais tarde.');
             }
             setLoading(false);
-            console.log(error);
+            console.log(error.message);
         }     
     }
 
