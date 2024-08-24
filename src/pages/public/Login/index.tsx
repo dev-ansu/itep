@@ -147,15 +147,14 @@ const Login = ()=>{
                 <div className="w-full">
                     <label className="text-xl font-medium">Senha</label>
                     <Input
-                         
                         type={verSenha ? 'text':'password'}
                         register={register("password")}
                         error={errors.password?.message}
                         placeholder="Digite sua senha"
                     />
                     <div className="flex mt-2 gap-2 items-center">
-                        <input type="checkbox"  id="verSenha" onClick={()=> setVerSenha(!verSenha)} />
-                        <label htmlFor="verSenha">Ver senha</label>
+                        <input className="cursor-pointer" type="checkbox"  id="verSenha" onClick={()=> setVerSenha(!verSenha)} />
+                        <label className="cursor-pointer" htmlFor="verSenha">Ver senha</label>
                     </div>
                 </div>
                 <ButtonPadrao 
