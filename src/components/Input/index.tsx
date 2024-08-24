@@ -1,7 +1,7 @@
-import { HTMLAttributes } from "react"
+import { InputHTMLAttributes } from "react"
 import { UseFormRegisterReturn } from "react-hook-form"
 
-interface InputProps extends HTMLAttributes<HTMLInputElement>{
+interface InputProps extends InputHTMLAttributes<HTMLInputElement>{
     register?: UseFormRegisterReturn;
     error?: string;
 }

@@ -27,7 +27,7 @@ const Login = ()=>{
             const userDoc = await getDoc(userRef);
             if(userDoc.exists()){
                 const data = userDoc.data();
-                const now = new Date();
+                const now: any= new Date();
                 const timeSinceLastAttempt = now - data.lastAttempt.toDate();
 
                 if(data.failedAttempts >= 5 && timeSinceLastAttempt < 10 * 60 * 1000){
@@ -112,7 +112,7 @@ const Login = ()=>{
                     </div>
                 </div>
                 <ButtonPadrao 
-                    disabled={loading ? 'disabled':''}
+                    disabled={loading ? true:false}
                     text={loading ? 'Aguarde...':'Acessar'} 
                 />
             </form>

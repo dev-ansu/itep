@@ -1,5 +1,3 @@
-import Container from "../../../components/Container/index"
-import {Outlet} from "react-router-dom"
 
 const Dashboard = ()=>{
     return(

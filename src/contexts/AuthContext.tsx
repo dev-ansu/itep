@@ -31,7 +31,7 @@ export const AuthProvider = ({children}:AuthProviderProps)=>{
             if(user){
                 setUser({
                     uid: user.uid,
-                    name: user?.name,
+                    name: user?.displayName,
                     email: user?.email,
                 });
                 setLoadingAuth(false)
