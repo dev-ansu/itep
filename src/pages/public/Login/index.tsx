@@ -86,7 +86,9 @@ const Login = ()=>{
 
     return(
         <div className="flex p-4 flex-col h-screen w-full bg-white justify-center items-center">
-            <img src="/img/logo.jpeg" className="w-48" />
+            <Link to="/">
+                <img src="/img/logo.jpeg" className="w-48" />
+            </Link>
             <form onSubmit={handleSubmit(authentication)} className='flex gap-4 w-full max-w-md flex-col'>
                 <div className="w-full">
                     <label className="text-xl font-medium">E-mail</label>
