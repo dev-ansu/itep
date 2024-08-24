@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom"
-import { CiSettings } from "react-icons/ci";
+import { CiSettings, CiLogout } from "react-icons/ci";
 
 
 const Header = ()=>{
@@ -8,9 +8,12 @@ const Header = ()=>{
             <ul className="flex gap-4">
                 <li className="font-medium text-white"><Link to="/app">Home</Link></li>
             </ul>
-            <div>
+            <div className="flex gap-2">
                 <Link to="/app/settings">
                     <CiSettings size={28} color="#fff" />
+                </Link>
+                <Link to="/login">
+                    <CiLogout  size={28} color="#fff" />
                 </Link>
             </div>
         </nav>
