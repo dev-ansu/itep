@@ -26,7 +26,7 @@ const Navigation = ()=>{
     useEffect(()=>{
         window.addEventListener('resize', loadMenu);
         loadMenu();
-        return ()=> window.removeEventListener('resize', loadMenu)
+        // return ()=> window.removeEventListener('resize', loadMenu)
     },[])
     
     const handleClick = ()=>{

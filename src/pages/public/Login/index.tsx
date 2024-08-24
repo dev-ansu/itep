@@ -57,25 +57,6 @@ const Login = ()=>{
                 }
 
             })
-            // const userDoc = await getDoc(userRef);
-            // if(userDoc.exists()){
-            //     const data = userDoc.data();
-            //     const now: any= new Date();
-            //     const timeSinceLastAttempt = now - data.lastAttempt.toDate();
-
-            //     if(data.failedAttempts >= 5 && timeSinceLastAttempt < 10 * 60 * 1000){
-            //         const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
-            //         toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
-            //         return false;
-            //     }else if(timeSinceLastAttempt >= 10*60*1000){
-            //         // Resetar as tentativas após o período de 10 minutos
-            //         await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
-            //     }else{
-            //         await setDoc(userRef, {failedAttempts: data.failedAttempts + 1, lastAttempt: now})
-            //     }
-            // }else{
-            //     await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
-            // }
             return false; // Not blocked
     }
     useEffect(()=>{
@@ -89,6 +70,16 @@ const Login = ()=>{
         setLoading(true);
   
         try{
+            try{
+                await failedAttempts(data.email);
+           }catch(err: any){
+                if(err.message === "Account temporarily locked"){
+                    const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
+                    toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
+                    setLoading(false);
+                    return;
+                }
+            }
             const userRef = await signInWithEmailAndPassword(auth, data.email, data.password);
             const user = userRef.user;
 
@@ -103,16 +94,7 @@ const Login = ()=>{
             }
             throw new Error('error');
         }catch(error: any){  
-            try{
-                await failedAttempts(data.email);
-            }catch(err: any){
-                if(err.message === "Account temporarily locked"){
-                    const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
-                    toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
-                    setLoading(false);
-                    return;
-                }
-            }
+            
             if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
                 toast.error('Credenciais inválidas. Verifique seu e-mail e senha.');
             } else {

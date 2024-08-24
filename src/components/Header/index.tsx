@@ -1,15 +1,23 @@
 import { FaWhatsapp } from "react-icons/fa";
+import { useSiteContext } from "../../contexts/SiteContext";
+import DOMPurify from 'isomorphic-dompurify';
+
 
 const Header = ()=>{
+    const data = useSiteContext();
+    
+    const removeSpecialChars = (text: string): string => {
+        // Define a expressão regular para os caracteres "(" , ")" e "-"
+        const regex = /[()\-|\s]/g;
+        // Substitui os caracteres encontrados por uma string vazia
+        return text.replace(regex, '');
+    };
+
     return(
         <header className="w-full flex flex-col justify-center items-center  h-[calc(100vh-150px)] bg-orange-700">
-            <h1 className="w-5/6  md:w-3/6 text-white sm:text-xl lg:text-4xl text-xl md:text-3xl  text-center">
-
-                Somos uma escola <strong>profissionalizante</strong> que tem como principal
-                propósito ensinar uma nova profissão para nossos alunos e, com isso, ajudá-los a <br></br><strong>ENCONTRAR SUA MELHOR VERSÃO.</strong>
-
+            <h1 dangerouslySetInnerHTML={{__html: data?.text_cabecalho ?  DOMPurify.sanitize(data.text_cabecalho):''}} className="w-5/6  md:w-3/6 text-white sm:text-xl lg:text-4xl text-xl md:text-3xl  text-center">
             </h1>
-            <a className="w-96 shadow-2xl p-4 rounded-lg justify-center items-center text-xl whatsapp cursor-pointer my-6 text-black transition-all font-medium hover:bg-green-500  gap-4 flex bg-whatsapp">Entre em contato conosco <FaWhatsapp size={30} color="#fff" /></a>
+            <a target="_blank" href={`https://api.whatsapp.com/send?phone=55${removeSpecialChars(String(data.whatsapp))}`} className="w-96 shadow-2xl p-4 rounded-lg justify-center items-center text-xl whatsapp cursor-pointer my-6 text-black transition-all font-medium hover:bg-green-500  gap-4 flex bg-whatsapp">Entre em contato conosco <FaWhatsapp size={30} color="#fff" /></a>
         </header>
     )
 }

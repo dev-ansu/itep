@@ -5,6 +5,7 @@ import Settings from "./pages/private/Settings";
 import LayoutPrivate from "./pages/private/LayoutPrivate";
 import Home from "./pages/public/Home";
 import Login from "./pages/public/Login/index";
+import SiteSettings from "./pages/private/Settings/SiteSettings";
 
 export const routes = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ export const routes = createBrowserRouter([
                 path:"/app/settings",
                 element:<Settings />,
             },
+            {
+                path:"/app/settings/site",
+                element: <SiteSettings />
+            }
         ]
     },
     {
