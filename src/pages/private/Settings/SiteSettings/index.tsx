@@ -9,29 +9,35 @@ import { useAuthContext } from "../../../../contexts/AuthContext";
 import { db } from "../../../../services/firebaseConnection";
 import { doc, getDoc, setDoc } from "firebase/firestore"
 import { toast } from "react-toastify";
-import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect,  useState } from "react";
+
+interface ConfigData extends SiteData{
+    beneficios: string[];
+}
 
 const SiteSettings = ()=>{
     const {user} = useAuthContext();
-    const [beneficio, setBeneficio] = useState('');
-    const [beneficios, setBeneficios] = useState([]);
+    const [beneficio, setBeneficio] = useState<string>('');
+    const [beneficios, setBeneficios] = useState<string[]>([]);
     const {handleSubmit, register, setValue, formState:{errors}} = useForm<SiteData>({
         mode:"onChange",
         resolver: zodResolver(siteSettingsSchema)
     });
-    const buttonAddBeneficio = useRef<HTMLElement>();
-    const inputAddBeneficio = useRef<HTMLElement>();
+
 
     const loadConfig = async ()=>{
         const docRef = doc(db, 'site_config', 'config');
         try{
             const snapshot = await getDoc(docRef);
-            const data = snapshot.data();
-            for(let key in data){
-                if(key == 'beneficios'){
-                    setBeneficios(data[key])
+            const data = snapshot.data() as ConfigData;
+            if(data){
+                if(data.beneficios){
+                    setBeneficios(data.beneficios)
                 }
-                setValue(key, data[key]);
+                for(let key in data){
+                    const chave = key as keyof SiteData;
+                    setValue(chave, data[chave]);
+                }
             }
         }catch(err){
             console.log(err);
@@ -60,21 +66,11 @@ const SiteSettings = ()=>{
     }
 
     const handleDeleteItem = (i: number)=>{
-        const newBeneficios = beneficios.filter( (item, index) => index != i)
+        const newBeneficios = beneficios.filter( (_, index) => index != i)
         setBeneficios(newBeneficios)
     }
 
-    const handleAddBeneficio = (e: KeyboardEvent)=>{
-        if(e.key.toLowerCase() === 'enter'){
-            if(buttonAddBeneficio.current != undefined){
-                buttonAddBeneficio.current.click();
-                if(inputAddBeneficio.current != undefined){
-                    inputAddBeneficio.current?.focus();
-                }
-            }
-        }        
-    }
-
+ 
     return(
         <div className="p-4"> 
             <h1 className="flex gap-2 items-center">
@@ -131,13 +127,12 @@ const SiteSettings = ()=>{
                 <div className="flex w-full gap-2 items-center">
                     <label htmlFor="Beneficios">Benefícios:</label>
                     <Input
-                        ref={inputAddBeneficio}
                         value={beneficio}
                         onChange={(e)=> setBeneficio(e.target.value)}
-                        onKeyUp={handleAddBeneficio}
+            
                     />
 
-                    <button ref={buttonAddBeneficio} onClick={handleClickBeneficios}>
+                    <button onClick={handleClickBeneficios}>
                         <FaPlus size={24} className="text-orange-600" />
                     </button>
                 </div>

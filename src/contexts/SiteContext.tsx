@@ -22,8 +22,10 @@ export const SiteProvider = ({children}:SiteProvider)=>{
         const docRef = doc(db, 'site_config', 'config');
         try{
             const snapshot = await getDoc(docRef);
-            const data = snapshot.data();
-            setSiteData(data);
+            const data = snapshot.data() as SiteData;
+            if(data){
+                setSiteData(data);
+            }
         }catch(err){
             console.log(err);
         }
@@ -35,7 +37,7 @@ export const SiteProvider = ({children}:SiteProvider)=>{
 
 
     return(
-        <SiteContext.Provider value={{...siteData}}>
+        <SiteContext.Provider value={{...siteData as SiteData}}>
             {children}
         </SiteContext.Provider>
     )
