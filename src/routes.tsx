@@ -37,7 +37,7 @@ export const routes = createBrowserRouter([
         path:"*",
         element:
         <div className="flex h-screen w-full justify-center items-center bg-slate-800">
-            <h1 className="text-white font-medium text-4xl">404 - Página não encontrada.</h1>
+            <span className="text-white font-thin text-4xl"><span className="font-bold">404</span> | Página não encontrada.</span>
         </div>
     }
 ])
