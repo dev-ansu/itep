@@ -8,7 +8,13 @@ import { auth, db } from "../../../services/firebaseConnection";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth"
 import {toast} from "react-toastify";
 import { useEffect, useState } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore"
+import { doc, runTransaction, Timestamp } from "firebase/firestore"
+
+
+interface FailedLoginData {
+    failedAttempts: number;
+    lastAttempt: Timestamp;
+}
 
 const Login = ()=>{
     const [verSenha, setVerSenha] = useState(false);
@@ -20,33 +26,62 @@ const Login = ()=>{
     const navigate = useNavigate();
     
 
-
     const failedAttempts = async(email: string)=>{
         const userRef = doc(db, 'failedLogings', email);
         try{
-            const userDoc = await getDoc(userRef);
-            if(userDoc.exists()){
-                const data = userDoc.data();
+            await runTransaction(db, async(transaction: any)=>{
+                const userDoc = await transaction.get(userRef);
                 const now: any= new Date();
-                const timeSinceLastAttempt = now - data.lastAttempt.toDate();
 
-                if(data.failedAttempts >= 5 && timeSinceLastAttempt < 10 * 60 * 1000){
-                    const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
-                    toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
-                    return;
-                }else if(timeSinceLastAttempt >= 10*60*1000){
-                    // Resetar as tentativas após o período de 10 minutos
-                    await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
+                if(userDoc.exists()){
+                    const data = userDoc.data() as FailedLoginData;
+                    const now: any= new Date();
+                    const timeSinceLastAttempt = data.lastAttempt ? now.getTime() - data.lastAttempt.toDate().getTime():0;
+    
+                    if(data.failedAttempts >= 5 && timeSinceLastAttempt < 10 * 60 * 1000){
+                        const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
+                        toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
+                        throw new Error('Account temporarily locked');
+                    }
+
+                    if(timeSinceLastAttempt >= 10*60*1000){
+                        // Resetar as tentativas após o período de 10 minutos
+                        transaction.set(userRef, {failedAttempts: 1, lastAttempt: now})
+                        // await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
+                    }else{
+                        transaction.update(userRef, {failedAttempts: data.failedAttempts + 1, lastAttempt: now})
+                        // await setDoc(userRef, {failedAttempts: data.failedAttempts + 1, lastAttempt: now})
+                    }
                 }else{
-                    await setDoc(userRef, {failedAttempts: data.failedAttempts + 1, lastAttempt: now})
+                    transaction.set(userRef, { failedAttempts: 1, lastAttempt: now });
+                    // await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
                 }
-            }else{
-                await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
-            }
+
+            })
+            // const userDoc = await getDoc(userRef);
+            // if(userDoc.exists()){
+            //     const data = userDoc.data();
+            //     const now: any= new Date();
+            //     const timeSinceLastAttempt = now - data.lastAttempt.toDate();
+
+            //     if(data.failedAttempts >= 5 && timeSinceLastAttempt < 10 * 60 * 1000){
+            //         const timeRamaining = Math.ceil((10 * 60 * 1000 - timeSinceLastAttempt) / 60000)
+            //         toast.error(`Conta bloqueada temporariamente. Tente novamente em ${timeRamaining} minutos.`);
+            //         return false;
+            //     }else if(timeSinceLastAttempt >= 10*60*1000){
+            //         // Resetar as tentativas após o período de 10 minutos
+            //         await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
+            //     }else{
+            //         await setDoc(userRef, {failedAttempts: data.failedAttempts + 1, lastAttempt: now})
+            //     }
+            // }else{
+            //     await setDoc(userRef, {failedAttempts: 1, lastAttempt: new Date()});
+            // }
+            return false; // Not blocked
         }catch(err){
             setLoading(false);
             console.log(err);
-            return false;
+            return true; // blocked
         }
     }
     useEffect(()=>{
@@ -58,29 +93,37 @@ const Login = ()=>{
     
     const authentication = async(data: LoginData)=>{
         setLoading(true);
-        try{
-            const failed = await failedAttempts(data.email);
-            
-            if(failed) return;
+        const isBlocked = await failedAttempts(data.email);
+        console.log(isBlocked);
 
+        if(isBlocked){
+            return;
+        }
+        try{
             const userRef = await signInWithEmailAndPassword(auth, data.email, data.password);
-            if(userRef.user){
+            const user = userRef.user;
+
+            if(user){
                 const userRef = doc(db, 'failedLogings', data.email);
-                await setDoc(userRef, {failedAttempts: 0, lastAttempt: ''})
+                await runTransaction(db, async (transaction) => {
+                    transaction.update(userRef, { failedAttempts: 0, lastAttempt: new Date() });
+                });
                 toast.success('Usuário logado com sucesso.');
                 setLoading(false);
                 return navigate('/app');
-            }else{
-                await failedAttempts(data.email);
-                toast.error('Usuário não autenticado.');
-                setLoading(false);
-                return;
             }
-        }catch(err){
+            throw new Error('error');
+        }catch(error: any){  
             await failedAttempts(data.email);
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                toast.error('Credenciais inválidas. Verifique seu e-mail e senha.');
+            } else if (error.message === 'Account temporarily locked') {
+                // Already handled by failedAttempts
+            } else {
+                toast.error('Erro ao autenticar. Tente novamente mais tarde.');
+            }
             setLoading(false);
-            toast.error('Usuário não autenticado.');
-            console.log(err);
+            console.log(error);
         }     
     }
 
