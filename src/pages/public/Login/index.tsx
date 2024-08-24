@@ -86,6 +86,7 @@ const Login = ()=>{
 
     return(
         <div className="flex p-4 flex-col h-screen w-full bg-white justify-center items-center">
+            
             <Link to="/">
                 <img src="/img/logo.jpeg" className="w-48" />
             </Link>
