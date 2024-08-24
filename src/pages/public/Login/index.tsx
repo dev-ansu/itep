@@ -85,7 +85,7 @@ const Login = ()=>{
     }
 
     return(
-        <div className="flex flex-col h-screen w-full bg-white justify-center items-center">
+        <div className="flex p-4 flex-col h-screen w-full bg-white justify-center items-center">
             <img src="/img/logo.jpeg" className="w-48" />
             <form onSubmit={handleSubmit(authentication)} className='flex gap-4 w-full max-w-md flex-col'>
                 <div className="w-full">
@@ -100,13 +100,14 @@ const Login = ()=>{
 
                 <div className="w-full">
                     <label className="text-xl font-medium">Senha</label>
-                    <Input 
+                    <Input
+                         
                         type={verSenha ? 'text':'password'}
                         register={register("password")}
                         error={errors.password?.message}
                         placeholder="Digite sua senha"
                     />
-                    <div className="flex gap-2 items-center">
+                    <div className="flex mt-2 gap-2 items-center">
                         <input type="checkbox"  id="verSenha" onClick={()=> setVerSenha(!verSenha)} />
                         <label htmlFor="verSenha">Ver senha</label>
                     </div>
