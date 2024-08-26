@@ -1,44 +1,27 @@
 import {createContext, useContext, ReactNode, useState, useEffect} from "react";
-import { db } from "../services/firebaseConnection";
-import {  doc, getDoc } from "firebase/firestore";
-import {SiteData as SiteContextData}  from "../schemas/siteSettingsSchema";
+import { useLoaderData } from "react-router-dom";
+import { LoaderDataProps } from "../loaders/siteLoader";
 
-
-
-interface SiteData extends SiteContextData{
-    beneficios?: [] | null;
-}
 
 interface SiteProvider{
     children: ReactNode;
 }
 
-const SiteContext = createContext({} as SiteData);
+const SiteContext = createContext({} as LoaderDataProps);
 
 export const SiteProvider = ({children}:SiteProvider)=>{
-    const [siteData, setSiteData] = useState<SiteData | null>(null);
+    const loaderData = useLoaderData() as LoaderDataProps;
+    const [data, setData] = useState<LoaderDataProps>(loaderData);
     
-    const loadConfig = async ()=>{
-        const docRef = doc(db, 'site_config', 'config');
-        try{
-            const snapshot = await getDoc(docRef);
-            const data = snapshot.data() as SiteData;
-            if(data){
-                setSiteData(data);
-            }
-        }catch(err){
-            console.log(err);
-        }
-    }
-
+    
     useEffect(()=>{
-        loadConfig();
-    },[]);
+        setData(loaderData)
+    },[loaderData]);
 
 
     return(
-        <SiteContext.Provider value={{...siteData as SiteData}}>
-            {children}
+        <SiteContext.Provider value={data}>
+            { children }
         </SiteContext.Provider>
     )
 }

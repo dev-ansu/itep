@@ -6,15 +6,12 @@ import { SiteProvider } from "../../contexts/SiteContext";
 
 const Layout = ()=>{
     return(
-        <>
-            <SiteProvider>
-
-                <TopHeader />
-                <Navigation />
-                <Outlet />
-                <BottomFooter />
-            </SiteProvider>
-        </>
+        <SiteProvider>
+            <TopHeader />
+            <Navigation />
+            <Outlet />
+            <BottomFooter />
+        </SiteProvider>
     )
 }
 

@@ -4,7 +4,8 @@ import { useSiteContext } from "../../contexts/SiteContext";
 
 
 const TopHeader = ()=>{
-    const data = useSiteContext();
+    const {siteData} = useSiteContext();
+    const data = siteData;
     return(
         <div className="w-full px-2 h-8 flex justify-center mx-auto items-center bg-orange-600">
             <div className="w-full max-w-7xl flex justify-between items-center h-full">

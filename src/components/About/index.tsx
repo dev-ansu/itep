@@ -4,8 +4,7 @@ import { useSiteContext } from "../../contexts/SiteContext";
 import DOMPurify from "isomorphic-dompurify";
 
 const About = ()=>{
-    const data = useSiteContext();
-
+    const {beneficios, siteData} = useSiteContext();
 
     return(
         <div className="w-full relative my-12 min-h-screen h-screen bg-slate-600">
@@ -17,10 +16,10 @@ const About = ()=>{
             <div  className="absolute shadow-lg md:left-[46.67%] top-24 bg-white drop-shadow-2xl flex flex-col gap-8 p-8">
                 <div className="">
                     <h1 className="text-4xl font-bold uppercase">Sobre <span className="text-orange-600">nós</span></h1>                
-                    <p className="italic text-zinc-400">{DOMPurify.sanitize(data?.sobre_nos ? data.sobre_nos:'')}</p>
+                    <p className="italic text-zinc-400">{DOMPurify.sanitize(siteData?.sobre_nos ? siteData.sobre_nos:'')}</p>
                 </div>
                 <ul className="flex flex-col gap-4">
-                    {data?.beneficios && data.beneficios.map( beneficio => (
+                    {beneficios && beneficios.map( beneficio => (
                         <li className="italic flex gap-2 items-center"><FaCheck className="text-orange-600" />{DOMPurify.sanitize(beneficio)}</li>
                     ))}
                 </ul>

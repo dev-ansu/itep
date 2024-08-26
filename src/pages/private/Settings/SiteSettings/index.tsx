@@ -1,5 +1,5 @@
 import { FaArrowLeft, FaPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 import Input, { InputM } from "../../../../components/Input";
 import { ButtonPadrao } from "../../../../components/Button";
 import { useForm } from "react-hook-form";
@@ -7,16 +7,19 @@ import { SiteData, siteSettingsSchema } from "../../../../schemas/siteSettingsSc
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthContext } from "../../../../contexts/AuthContext";
 import { db } from "../../../../services/firebaseConnection";
-import { doc, getDoc, setDoc } from "firebase/firestore"
+import { doc, setDoc } from "firebase/firestore"
 import { toast } from "react-toastify";
-import { MouseEvent, useEffect,  useState } from "react";
+import { KeyboardEvent, MouseEvent, useEffect,  useRef,  useState } from "react";
+import { useSiteContext } from "../../../../contexts/SiteContext";
 
-interface ConfigData extends SiteData{
+export interface ConfigData extends SiteData{
     beneficios: string[];
 }
 
 const SiteSettings = ()=>{
-    
+    const loaderData = useSiteContext();
+    const beneficioRef = useRef<HTMLInputElement>(null);
+    const buttonSetBeneficio = useRef<HTMLButtonElement>(null);
     const {user} = useAuthContext();
     const [beneficio, setBeneficio] = useState<string>('');
     const [beneficios, setBeneficios] = useState<string[]>([]);
@@ -26,28 +29,23 @@ const SiteSettings = ()=>{
     });
 
 
-    const loadConfig = async ()=>{
-        const docRef = doc(db, 'site_config', 'config');
-        try{
-            const snapshot = await getDoc(docRef);
-            const data = snapshot.data() as ConfigData;
-            if(data){
-                if(data.beneficios){
-                    setBeneficios(data.beneficios)
-                }
-                for(let key in data){
+    const loadConfig = ()=>{
+            if(loaderData.beneficios){
+                setBeneficios(loaderData.beneficios)
+            }
+
+            for(let key in loaderData.siteData){
+                if(key != 'beneficios'){
                     const chave = key as keyof SiteData;
-                    setValue(chave, data[chave]);
+                    setValue(chave, loaderData.siteData[chave]);
                 }
             }
-        }catch(err){
-            console.log(err);
-        }
+        
     }
 
     useEffect(()=>{
         loadConfig();
-    },[]);
+    },[loaderData]);
 
     const save = async(data: SiteData)=>{
         try{
@@ -71,7 +69,15 @@ const SiteSettings = ()=>{
         setBeneficios(newBeneficios)
     }
 
- 
+    
+    const handlePressEnterOnBeneficios = (e: KeyboardEvent)=>{
+        if(e.key.toLowerCase() === 'enter'){
+            if(beneficioRef.current != undefined && buttonSetBeneficio.current != undefined){
+                buttonSetBeneficio.current.click();
+            }
+        }
+    }
+
     return(
         <div className="p-4"> 
             <h1 className="flex gap-2 items-center">
@@ -128,12 +134,14 @@ const SiteSettings = ()=>{
                 <div className="flex w-full gap-2 items-center">
                     <label htmlFor="Beneficios">Benefícios:</label>
                     <Input
+                        ref={beneficioRef}
+                        onKeyDown={handlePressEnterOnBeneficios}
                         value={beneficio}
                         onChange={(e)=> setBeneficio(e.target.value)}
             
                     />
 
-                    <button onClick={handleClickBeneficios}>
+                    <button ref={buttonSetBeneficio} onClick={handleClickBeneficios}>
                         <FaPlus size={24} className="text-orange-600" />
                     </button>
                 </div>

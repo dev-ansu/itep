@@ -4,7 +4,8 @@ import { useSiteContext } from "../../contexts/SiteContext";
 
 
 const BottomFooter = ()=>{
-    const data = useSiteContext();
+    const {siteData} = useSiteContext();
+    const data = siteData;
 
     return(
         <div className="w-full px-2 h-8 flex justify-center mx-auto items-center bg-orange-600">
