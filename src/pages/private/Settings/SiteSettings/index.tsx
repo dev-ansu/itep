@@ -35,7 +35,7 @@ const SiteSettings = ()=>{
                     setBeneficios(data.beneficios)
                 }
                 for(let key in data){
-                    const chave = key as keyof SiteData;
+                    const chave = key as keyof ConfigData;
                     setValue(chave, data[chave]);
                 }
             }
