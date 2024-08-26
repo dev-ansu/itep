@@ -16,6 +16,7 @@ interface ConfigData extends SiteData{
 }
 
 const SiteSettings = ()=>{
+    
     const {user} = useAuthContext();
     const [beneficio, setBeneficio] = useState<string>('');
     const [beneficios, setBeneficios] = useState<string[]>([]);
@@ -35,7 +36,7 @@ const SiteSettings = ()=>{
                     setBeneficios(data.beneficios)
                 }
                 for(let key in data){
-                    const chave = key as keyof ConfigData;
+                    const chave = key as keyof SiteData;
                     setValue(chave, data[chave]);
                 }
             }
