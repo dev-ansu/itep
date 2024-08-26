@@ -1,5 +1,5 @@
 import { InputMask, InputMaskProps } from "@react-input/mask";
-import { InputHTMLAttributes, RefObject, forwardRef } from "react"
+import { InputHTMLAttributes, forwardRef } from "react"
 import { UseFormRegisterReturn } from "react-hook-form"
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement>{
@@ -20,7 +20,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({className, error, regis
         if (typeof ref === 'function') {
             ref(node);
         } else if (ref && 'current' in ref) {
-            (ref as RefObject<HTMLInputElement>).current = node;
+            ref.current = node;
         }
         if (registerRef) {
             registerRef(node);
@@ -46,7 +46,7 @@ export const InputM = forwardRef<HTMLInputElement, InputMProps>(({className, err
         if (typeof ref === 'function') {
             ref(node);
         } else if (ref && 'current' in ref) {
-            (ref as RefObject<HTMLInputElement>).current = node;
+            ref.current = node;
         }
         if (registerRef) {
             registerRef(node);
