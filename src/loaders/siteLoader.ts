@@ -69,10 +69,7 @@ export const combinedLoadSite = async()=>{
     try{
         const cursos = await fetchCursos();
         const { beneficios, siteData } = await loadSiteData();
-        if(cursos && beneficios && siteData){
-            return {cursos, beneficios, siteData};
-        }
-        throw new Error('Failed to load data');
+        return {cursos, beneficios, siteData};
     }catch(err){
         console.log(err)
         throw new Error("Failed to load data")
