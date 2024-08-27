@@ -1,17 +1,13 @@
 import { FaWhatsapp } from "react-icons/fa";
 import { useSiteContext } from "../../contexts/SiteContext";
 import DOMPurify from 'isomorphic-dompurify';
+import { removeSpecialChars } from "../../utils/utils";
 
 
 const Header = ()=>{
     const {siteData} = useSiteContext();
     
-    const removeSpecialChars = (text: string): string => {
-        // Define a expressão regular para os caracteres "(" , ")" e "-"
-        const regex = /[()\-|\s]/g;
-        // Substitui os caracteres encontrados por uma string vazia
-        return text.replace(regex, '');
-    };
+    
 
     return(
         <header className="w-full flex flex-col justify-center items-center  h-[calc(100vh-150px)] bg-orange-700">

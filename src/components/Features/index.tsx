@@ -3,48 +3,36 @@ import Container from "../Container";
 import { CursoImageProps } from "../../pages/private/Cursos";
 import { CursosData } from "../../schemas/cursosValidationSchema";
 import { useSiteContext } from "../../contexts/SiteContext";
+import { FaArrowRight } from "react-icons/fa";
+import CardCurso from "../CardCurso";
 
 export interface CursoProp extends CursosData{
     id: string;
     cursoIMage: CursoImageProps; 
     topicosCurso: string[];
+    acessos?:number;
+    entrouEmContato?: number;
 }
 
 const Features = ()=>{
     const {cursos} = useSiteContext();
   
-
-    const truncateText = (text: string, maxLength:number) => {
-      if(text.length > maxLength) {
-        return text.substring(0, maxLength) + '...';
-      }
-      return text;
-    };
     return(
         <Container>
-            <div className="h-auto">
+            <div className="h-auto my-12 flex flex-col justify-center items-center">
                 <div className="text-center">
                     <h1 className="text-4xl text-center font-bold uppercase">Principais <span className="text-orange-600">formações</span></h1>                
                     <p className="italic text-zinc-400 text-center">Conheça nossos principais cursos.</p>
                 </div>
 
-                <div className="my-12 w-full p-4 grid gap-8 md:grid-cols-3 lg:grid-cols-4 grid-cols-1 justify-center">
+                <div className="w-full p-4 grid gap-8 md:grid-cols-3 lg:grid-cols-4 grid-cols-1 justify-center">
                     {cursos && cursos.map(curso =>(
-                        <Link key={curso.id} className="hover:scale-105 transition-all " to={`curso/${curso.id}`}>
-                            <div className="sm:w-full bg-white shadow-lg">
-                                <div className="w-full">
-                                    <img src={curso.cursoIMage.url} alt={curso.nome} className=""></img>
-                                </div>
-                                <div className="flex flex-col  p-8 justify-center items-center">
-                                    <p className="font-medium text-center">{curso.nome}</p>
-                                    <p className="mt-2 truncate">{truncateText(curso.descricao, 100)}</p>
-                                </div>                        
-                            </div>
-                        </Link>
+                        <CardCurso key={curso.id} curso={curso} to="curso/" />
                     ))
                     }
                 </div>
-                
+                <Link className="text-bold hover:bg-orange-600 hover:text-white text-lg  justify-center rounded-lg gap-2 p-2 flex items-center border-2 border-orange-600 text-orange-600" to="/cursos">Veja mais <FaArrowRight /></Link>
+             
             </div>
         </Container>
     )

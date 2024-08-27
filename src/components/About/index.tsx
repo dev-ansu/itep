@@ -7,18 +7,18 @@ const About = ()=>{
     const {beneficios, siteData} = useSiteContext();
 
     return(
-        <div className="w-full relative my-12 min-h-screen h-screen bg-slate-600">
+        <div className="w-full my-12 min-h-screen flex h-auto bg-slate-600">
 
-            <div className="h-full w-1/2 bg-slate-300">
-                <img className="w-full h-full object-cover" src="/img/sobre2.jpeg" alt="Imagem do sobre. Homem mexendo no computador." />
+            <div className="h-full min-h-screen w-1/2 bg-slate-300">
+                <img className="w-full h-screen object-cover" src="/img/sobre2.jpeg" alt="Imagem do sobre. Homem mexendo no computador." />
             </div>
             
-            <div  className="absolute shadow-lg md:left-[46.67%] top-24 bg-white drop-shadow-2xl flex flex-col gap-8 p-8">
+            <div  className="max-w-xl  shadow-lg md:left-[46.67%] md:top-0 top-24 bg-white drop-shadow-2xl flex flex-col gap-8 p-8">
                 <div className="">
                     <h1 className="text-4xl font-bold uppercase">Sobre <span className="text-orange-600">nós</span></h1>                
                     <p className="italic text-zinc-400">{DOMPurify.sanitize(siteData?.sobre_nos ? siteData.sobre_nos:'')}</p>
                 </div>
-                <ul className="flex flex-col gap-4">
+                <ul className="flex flex-wrap gap-4">
                     {beneficios && beneficios.map( beneficio => (
                         <li className="italic flex gap-2 items-center"><FaCheck className="text-orange-600" />{DOMPurify.sanitize(beneficio)}</li>
                     ))}

@@ -8,6 +8,9 @@ import Login from "./pages/public/Login/index";
 import SiteSettings from "./pages/private/Settings/SiteSettings";
 import { combinedLoadSite, loadSiteData } from "./loaders/siteLoader";
 import Cursos from "./pages/private/Cursos";
+import Curso from "./pages/private/Curso";
+import ListaCursos from "./pages/private/ListaCursos";
+import CursoInfo from "./pages/public/CursoInfo";
 
 export const routes = createBrowserRouter([
     {
@@ -17,7 +20,15 @@ export const routes = createBrowserRouter([
             {
                 path:"/",
                 element:<Home />
-            }
+            },
+            {
+                path:"/cursos",
+                element:<ListaCursos to="/curso/" />
+            },
+            {
+                path:"/curso/:id",
+                element:<CursoInfo />
+            },
         ]
     },
     {
@@ -27,6 +38,10 @@ export const routes = createBrowserRouter([
             {
                 path:"/app",
                 element:<Dashboard />,
+            },
+            {
+                path:"/app/cursos",
+                element:<ListaCursos />,
             },
             {
                 path:"/app/settings",
@@ -39,6 +54,10 @@ export const routes = createBrowserRouter([
             {
                 path:"/app/settings/cursos",
                 element: <Cursos />
+            },
+            {
+                path:"/app/curso/:id",
+                element: <Curso />
             }
         ]
     },
