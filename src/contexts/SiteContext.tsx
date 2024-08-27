@@ -1,17 +1,17 @@
 import {createContext, useContext, ReactNode, useState, useEffect} from "react";
 import { useLoaderData } from "react-router-dom";
-import { LoaderDataProps } from "../loaders/siteLoader";
+import { LoaderCombinedProps } from "../loaders/siteLoader";
 
 
 interface SiteProvider{
     children: ReactNode;
 }
 
-const SiteContext = createContext({} as LoaderDataProps);
+const SiteContext = createContext({} as LoaderCombinedProps);
 
 export const SiteProvider = ({children}:SiteProvider)=>{
-    const loaderData = useLoaderData() as LoaderDataProps;
-    const [data, setData] = useState<LoaderDataProps>(loaderData);
+    const loaderData = useLoaderData() as LoaderCombinedProps;
+    const [data, setData] = useState<LoaderCombinedProps>(loaderData);
     
     
     useEffect(()=>{

@@ -72,6 +72,7 @@ const SiteSettings = ()=>{
     
     const handlePressEnterOnBeneficios = (e: KeyboardEvent)=>{
         if(e.key.toLowerCase() === 'enter'){
+            e.preventDefault();
             if(beneficioRef.current != undefined && buttonSetBeneficio.current != undefined){
                 buttonSetBeneficio.current.click();
             }
@@ -138,7 +139,7 @@ const SiteSettings = ()=>{
                         onKeyDown={handlePressEnterOnBeneficios}
                         value={beneficio}
                         onChange={(e)=> setBeneficio(e.target.value)}
-            
+                    
                     />
 
                     <button ref={buttonSetBeneficio} onClick={handleClickBeneficios}>
