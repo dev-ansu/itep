@@ -14,11 +14,11 @@ import About from "../../../components/About";
 const CursoInfo = ()=>{
     const {id} = useParams();
     const [curso, setCurso] = useState<CursoProp | null>(null);
-    const {siteData, cursos} = useSiteContext();
+    const {data: {siteData, cursos}} = useSiteContext();
 
 
    const loadCurso = async()=>{
-        const cursoIndex = cursos.findIndex( curso => curso.id == id);
+        const cursoIndex = cursos.findIndex( (curso: CursoProp) => curso.id == id);
         if(cursoIndex >= 0){
             const cursoFilter = cursos[cursoIndex] as CursoProp;
             setCurso(cursoFilter);
