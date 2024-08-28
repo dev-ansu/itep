@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CursosData, cursosValidationSchema } from "../../../schemas/cursosValidationSchema";
 import { db, storage } from "../../../services/firebaseConnection";
-import {  doc, getDoc, updateDoc } from "firebase/firestore";
+import {  doc, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { v4 as uuidV4 } from "uuid";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -14,6 +14,7 @@ import { useAuthContext } from "../../../contexts/AuthContext";
 import { FiTrash } from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import { CursoProp } from "../../../components/Features";
+import { useSiteContext } from "../../../contexts/SiteContext";
 
 export interface CursoImageProps{
     uid: string;
@@ -23,6 +24,7 @@ export interface CursoImageProps{
 }
 
 const Curso = ()=>{
+    const { cursos } = useSiteContext();
     const { id } = useParams<string>();
     const [curso, setCurso] = useState<CursoProp | null>(null);
     const inputTopico = useRef<HTMLInputElement>(null);
@@ -37,21 +39,19 @@ const Curso = ()=>{
     const [topicosCurso, setTopicosCursos] = useState<string[]>([]);
 
     const loadCurso = async()=>{
-        if(id){
-            const docRef = doc(db, 'cursos', id);
-            const docSnap = await getDoc(docRef);
-            if(docSnap.exists()){
-                const data = docSnap.data() as CursoProp;
-                setTopicosCursos(data.topicosCurso);
-                setCurso(data);
-                setCursoImage(data.cursoIMage);
-                for(let key in data){
-                    const chave = key as keyof CursosData;
-                    setValue(chave, data[chave]);
-                }
+        const cursoIndex = cursos.findIndex( curso => curso.id == id);
+        if(cursoIndex >= 0){
+            const data = cursos[cursoIndex] as CursoProp;
+            setCurso(data);
+            setTopicosCursos(data.topicosCurso);
+            setCursoImage(data.cursoIMage);
+            for(let key in data){
+                const chave = key as keyof CursosData;
+                setValue(chave, data[chave]);
             }
         }
     }
+  
 
     useEffect(()=>{
         loadCurso()
@@ -94,6 +94,9 @@ const Curso = ()=>{
     }
     
     const handleFile = async (e: ChangeEvent<HTMLInputElement>)=>{
+        if(cursoIMage != null){
+            setCursoImage(null);
+        }
         if(e.target.files && e.target.files[0]){
             const acceptedFiles = ['image/jpeg', 'image/png','image/jpg'];
             const image = e.target.files[0];
@@ -131,7 +134,6 @@ const Curso = ()=>{
         try{
             await deleteObject(imageRef);
             setCursoImage(null);
-            setCursoImage(null)
         }catch(err){
             toast.error("Houve um erro ao tentar apagar a imagem.")
         }
@@ -154,14 +156,12 @@ const Curso = ()=>{
             <h1>Curso</h1>
             <form onSubmit={handleSubmit(update)} className="flex flex-col w-full gap-4 mt-8">
                 <div className="flex gap-2 h-48">
-                    {!cursoIMage &&
                     <label htmlFor="imagem" className="flex justify-center items-center w-48 border rounded-md cursor-pointer border-black h-full">
                             <FaUpload size={30} />
                         <div className="flex justify-center items-center">
                             <input type="file" id="imagem" style={{visibility: "hidden", display:"none"}}  accept="image/*" onChange={handleFile}  />
                         </div>
                     </label>
-                    }
                     {cursoIMage &&
                     <div className="h-48  w-full flex items-center justify-center">
                         <div className="w-64 h-64 relative">

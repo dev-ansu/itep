@@ -6,7 +6,7 @@ import LayoutPrivate from "./pages/private/LayoutPrivate";
 import Home from "./pages/public/Home";
 import Login from "./pages/public/Login/index";
 import SiteSettings from "./pages/private/Settings/SiteSettings";
-import { combinedLoadSite, loadSiteData } from "./loaders/siteLoader";
+import { combinedLoadSite } from "./loaders/siteLoader";
 import Cursos from "./pages/private/Cursos";
 import Curso from "./pages/private/Curso";
 import ListaCursos from "./pages/private/ListaCursos";
@@ -33,7 +33,7 @@ export const routes = createBrowserRouter([
     },
     {
         element:<LayoutPrivate />,
-        loader: loadSiteData,
+        loader: combinedLoadSite,
         children:[
             {
                 path:"/app",

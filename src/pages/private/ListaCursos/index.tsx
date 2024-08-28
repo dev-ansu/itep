@@ -1,5 +1,4 @@
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import {  deleteDoc, doc } from "firebase/firestore";
 import { db, storage } from "../../../services/firebaseConnection";
 import { CursoProp } from "../../../components/Features";
 import Input from "../../../components/Input";
@@ -9,55 +8,42 @@ import { FaTrash } from "react-icons/fa";
 import { deleteObject, ref } from "firebase/storage";
 import { toast } from "react-toastify";
 import { CursoImageProps } from "../Cursos";
+import { useSiteContext } from "../../../contexts/SiteContext";
 
 interface ListaCursoProps{
     to?: string;
 }
 const ListaCursos = ({to = '/app/curso/'}: ListaCursoProps)=>{
-    const [cursos, setCursos] = useState<CursoProp[]>();
+    const { cursos } = useSiteContext();
     const {user} = useAuthContext();
-    const loadCursos = async()=>{
-        const response = await getDocs(collection(db, 'cursos'));
-        const cursos: CursoProp[] = [];
-        response.docs.forEach(curso =>{
-            const data = curso.data() as CursoProp;
-            cursos.push({
-                id: curso.id,
-                nome: data.nome,
-                carga_horaria: data.carga_horaria,
-                certificacao: data.certificacao,
-                cursoIMage: data.cursoIMage,
-                descricao: data.descricao,
-                topicosCurso: data.topicosCurso,
-                acessos: data.acessos,
-            })
-        })
-        setCursos(cursos);
-    }
-    useEffect(()=>{
-        loadCursos();
-    },[]);
+    
+    console.log(cursos);
+   
 
     const handleDeleteImage = async(image: CursoImageProps)=>{
-        const imagePath = `images/${image.uid}/${image.name}`;
-        const imageRef = ref(storage, imagePath);
-        try{
-            await deleteObject(imageRef);
-        }catch(err){
-            toast.error("Houve um erro ao tentar apagar a imagem.")
+        if(user?.uid){
+            const imagePath = `images/${image.uid}/${image.name}`;
+            const imageRef = ref(storage, imagePath);
+            try{
+                await deleteObject(imageRef);
+            }catch(err){
+                toast.error("Houve um erro ao tentar apagar a imagem.")
+            }
         }
     }
 
     const handleDeleteCurso = async(curso: CursoProp)=>{
-        if(window.confirm('Deseja realmente excluir este registro?')){
-            const docRef = doc(db, 'cursos', curso.id);
-            try{
-                await deleteDoc(docRef);
-                await handleDeleteImage(curso.cursoIMage);
-                toast.success('Curso excluído com sucesso.');
-            }catch(err){
-                toast.error('Houve um erro ao tentar excluir o curso.')
-                console.log(err);
+        if(user?.uid){
+            if(window.confirm('Deseja realmente excluir este registro?')){
+                    const docRef = doc(db, 'cursos', curso.id);
+                    try{
+                        await deleteDoc(docRef);
+                        await handleDeleteImage(curso.cursoIMage);
+                        toast.success('Curso excluído com sucesso.');
+                }catch(err){
+                    toast.error('Houve um erro ao tentar excluir o curso.')
+                    console.log(err);
+                }
             }
         }
     }
