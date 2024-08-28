@@ -4,18 +4,17 @@ import { useSiteContext } from "../../contexts/SiteContext";
 
 
 const BottomFooter = ()=>{
-    const {siteData} = useSiteContext();
-    const data = siteData;
+    const {data:{siteData}} = useSiteContext();
 
     return(
         <div className="w-full px-2 h-8 flex justify-center mx-auto items-center bg-orange-600">
             <div className="w-full max-w-7xl flex justify-between items-center h-full">
                 <div className="flex gap-4">
                     <span className="flex text-sm gap-1 text-white items-center">
-                        <FaWhatsapp color="#fff" /> {data.whatsapp}
+                        <FaWhatsapp color="#fff" /> {siteData.whatsapp}
                     </span>
                     <span className="flex text-sm gap-1 text-white items-center">
-                        <MdEmail color="#fff" /> {data.email}
+                        <MdEmail color="#fff" /> {siteData.email}
                     </span>
                 </div>
                 <div className="flex gap-2">

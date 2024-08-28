@@ -1,18 +1,28 @@
 import {createContext, useContext, ReactNode, useState, useEffect} from "react";
 import { useLoaderData } from "react-router-dom";
-import { LoaderCombinedProps } from "../loaders/siteLoader";
+import { combinedLoadSite, LoaderCombinedProps } from "../loaders/siteLoader";
 
 
 interface SiteProvider{
     children: ReactNode;
 }
 
-const SiteContext = createContext({} as LoaderCombinedProps);
+interface SiteContextProps{
+    data: LoaderCombinedProps;
+    revalidate: ()=> Promise<void>;
+}
+
+const SiteContext = createContext({} as SiteContextProps);
 
 export const SiteProvider = ({children}:SiteProvider)=>{
     const loaderData = useLoaderData() as LoaderCombinedProps;
     const [data, setData] = useState<LoaderCombinedProps>(loaderData);
     
+    const revalidate = async()=>{
+        const revalidated = await combinedLoadSite();
+        setData(revalidated);
+    }
+
     
     useEffect(()=>{
         setData(loaderData)
@@ -20,7 +30,7 @@ export const SiteProvider = ({children}:SiteProvider)=>{
 
 
     return(
-        <SiteContext.Provider value={data}>
+        <SiteContext.Provider value={{data, revalidate}}>
             { children }
         </SiteContext.Provider>
     )

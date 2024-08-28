@@ -5,22 +5,21 @@ import { ButtonPadrao } from "../../../../components/Button";
 import { useForm } from "react-hook-form";
 import { SiteData, siteSettingsSchema } from "../../../../schemas/siteSettingsSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthContext } from "../../../../contexts/AuthContext";
 import { db } from "../../../../services/firebaseConnection";
 import { doc, setDoc } from "firebase/firestore"
 import { toast } from "react-toastify";
 import { KeyboardEvent, MouseEvent, useEffect,  useRef,  useState } from "react";
 import { useSiteContext } from "../../../../contexts/SiteContext";
 
+
 export interface ConfigData extends SiteData{
     beneficios: string[];
 }
 
 const SiteSettings = ()=>{
-    const loaderData = useSiteContext();
+    const {data, revalidate} = useSiteContext();
     const beneficioRef = useRef<HTMLInputElement>(null);
     const buttonSetBeneficio = useRef<HTMLButtonElement>(null);
-    const {user} = useAuthContext();
     const [beneficio, setBeneficio] = useState<string>('');
     const [beneficios, setBeneficios] = useState<string[]>([]);
     const {handleSubmit, register, setValue, formState:{errors}} = useForm<SiteData>({
@@ -30,14 +29,14 @@ const SiteSettings = ()=>{
 
 
     const loadConfig = ()=>{
-            if(loaderData.beneficios){
-                setBeneficios(loaderData.beneficios)
+            if(data.beneficios){
+                setBeneficios(data.beneficios)
             }
 
-            for(let key in loaderData.siteData){
+            for(let key in data.siteData){
                 if(key != 'beneficios'){
                     const chave = key as keyof SiteData;
-                    setValue(chave, loaderData.siteData[chave]);
+                    setValue(chave, data.siteData[chave]);
                 }
             }
         
@@ -45,11 +44,12 @@ const SiteSettings = ()=>{
 
     useEffect(()=>{
         loadConfig();
-    },[loaderData]);
+    },[data]);
 
     const save = async(data: SiteData)=>{
         try{
             await setDoc(doc(db, 'site_config', 'config'), {...data, beneficios, createdAt: new Date()})
+            await revalidate();
             toast.success("Configurações salvas com sucesso.");
         }catch(error){
             toast.error("Erro ao tentar salvar as configurações.");
@@ -79,6 +79,8 @@ const SiteSettings = ()=>{
         }
     }
 
+
+
     return(
         <div className="p-4"> 
             <h1 className="flex gap-2 items-center">
@@ -106,7 +108,6 @@ const SiteSettings = ()=>{
                             <label htmlFor="">E-mail da escola</label>
                             <Input
                                 register={register('email')}
-                                value={user?.email ?user.email:''}
                                 error={errors.email?.message}
                                 placeholder="Digite o WhatsApp da escola"
                             />
@@ -154,6 +155,9 @@ const SiteSettings = ()=>{
                         </div>
                     ))}
                 </div>
+                
+                
+
                 <ButtonPadrao 
                     text="Salvar"                
                 />

@@ -24,7 +24,7 @@ export interface CursoImageProps{
 }
 
 const Curso = ()=>{
-    const { cursos } = useSiteContext();
+    const { data:{cursos} } = useSiteContext();
     const { id } = useParams<string>();
     const [curso, setCurso] = useState<CursoProp | null>(null);
     const inputTopico = useRef<HTMLInputElement>(null);
@@ -39,7 +39,7 @@ const Curso = ()=>{
     const [topicosCurso, setTopicosCursos] = useState<string[]>([]);
 
     const loadCurso = async()=>{
-        const cursoIndex = cursos.findIndex( curso => curso.id == id);
+        const cursoIndex = cursos.findIndex( (curso: CursoProp) => curso.id == id);
         if(cursoIndex >= 0){
             const data = cursos[cursoIndex] as CursoProp;
             setCurso(data);

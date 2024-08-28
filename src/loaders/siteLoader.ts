@@ -40,12 +40,20 @@ export async function loadSiteData():Promise<LoaderDataProps> {
 }
 
 
-export const fetchCursos = async()=>{
-    const q = query(
-        collection(db, 'cursos'),
-        orderBy('nome'),
-        limit(5)
-    );
+export const fetchCursos = async(limite: number = 5)=>{
+    let q;
+    if(limite){
+        q = query(
+            collection(db, 'cursos'),
+            orderBy('nome'),
+            limit(limite)
+            );
+    }else{
+        q = query(
+            collection(db, 'cursos'),
+            orderBy('nome')
+            );
+    }
     try{
         const snapshot = await getDocs(q);
         
@@ -75,3 +83,4 @@ export const combinedLoadSite = async()=>{
         throw new Error("Failed to load data")
     }
 }
+

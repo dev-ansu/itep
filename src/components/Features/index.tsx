@@ -15,7 +15,7 @@ export interface CursoProp extends CursosData{
 }
 
 const Features = ()=>{
-    const {cursos} = useSiteContext();
+    const {data:{cursos}} = useSiteContext();
   
     return(
         <Container>

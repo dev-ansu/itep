@@ -5,7 +5,7 @@ import { removeSpecialChars } from "../../utils/utils";
 
 
 const Header = ()=>{
-    const {siteData} = useSiteContext();
+    const {data:{siteData}} = useSiteContext();
     
     
 

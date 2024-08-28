@@ -4,7 +4,7 @@ import { useSiteContext } from "../../contexts/SiteContext";
 import DOMPurify from "isomorphic-dompurify";
 
 const About = ()=>{
-    const {beneficios, siteData} = useSiteContext();
+    const {data:{siteData, beneficios}} = useSiteContext();
 
     return(
         <div className="w-full my-12 min-h-screen flex h-auto bg-slate-600">

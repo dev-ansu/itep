@@ -8,17 +8,27 @@ import { FaTrash } from "react-icons/fa";
 import { deleteObject, ref } from "firebase/storage";
 import { toast } from "react-toastify";
 import { CursoImageProps } from "../Cursos";
-import { useSiteContext } from "../../../contexts/SiteContext";
+import { fetchCursos } from "../../../loaders/siteLoader";
+import { useEffect, useState } from "react";
 
 interface ListaCursoProps{
     to?: string;
 }
 const ListaCursos = ({to = '/app/curso/'}: ListaCursoProps)=>{
-    const { cursos } = useSiteContext();
+    const [cursos, setCursos] = useState<CursoProp[] | null>(null);
     const {user} = useAuthContext();
     
-    console.log(cursos);
-   
+    const loadAllCursos = async()=>{     
+        const allCursos = await fetchCursos(0);
+        if(allCursos){
+            setCursos(allCursos);
+        }
+        
+    }
+
+    useEffect(()=>{
+        loadAllCursos();
+    })   
 
     const handleDeleteImage = async(image: CursoImageProps)=>{
         if(user?.uid){
@@ -56,8 +66,8 @@ const ListaCursos = ({to = '/app/curso/'}: ListaCursoProps)=>{
             <h1 className="mt-4 text-3xl">Todos os cursos</h1>
             <div className="grid mt-8 gap-3 lg:grid-cols-4 md:grid-cols-3 grid-cols-1">
                 {cursos && cursos.map( curso => (
-                    <div className="flex flex-col">
-                        <CardCurso key={curso.id} curso={curso} to={to} />
+                    <div key={curso.id} className="flex flex-col">
+                        <CardCurso  curso={curso} to={to} />
                         {user?.uid &&
                             <>
                             <div className="flex flex-col bg-white pb-4 px-2">
