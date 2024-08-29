@@ -16,6 +16,10 @@ export const routes = createBrowserRouter([
     {
         element: <Layout />,
         loader: combinedLoadSite,
+        errorElement:
+        <div className="flex h-screen w-full justify-center items-center bg-slate-800">
+            <span className="text-white font-thin text-4xl"><span className="font-bold">500</span> | Erro interno do servidor.</span>
+        </div>,
         children:[
             {
                 path:"/",
@@ -34,6 +38,10 @@ export const routes = createBrowserRouter([
     {
         element:<LayoutPrivate />,
         loader: combinedLoadSite,
+        errorElement:
+        <div className="flex h-screen w-full justify-center items-center bg-slate-800">
+            <span className="text-white font-thin text-4xl"><span className="font-bold">500</span> | Erro interno do servidor.</span>
+        </div>,
         children:[
             {
                 path:"/app",
