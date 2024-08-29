@@ -128,6 +128,7 @@ const Curso = ()=>{
         };
         setCursoImage(imageItem);
     }
+    
     const handleDeleteImage = async(image: CursoImageProps)=>{
         const imagePath = `images/${image.uid}/${image.name}`;
         const imageRef = ref(storage, imagePath);
