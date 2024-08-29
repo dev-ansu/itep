@@ -28,7 +28,7 @@ const ListaCursos = ({to = '/app/curso/'}: ListaCursoProps)=>{
 
     useEffect(()=>{
         loadAllCursos();
-    })   
+    },[])   
 
     const handleDeleteImage = async(image: CursoImageProps)=>{
         if(user?.uid){
